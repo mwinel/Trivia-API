@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
@@ -28,6 +28,19 @@ def create_app(test_config=None):
                              'GET, POST, PUT, DELETE, OPTIONS')
         return response
 
+    @app.route("/categories")
+    def categories():
+        """
+           Handles GET requests for all available
+           categories.
+        """
+        data = []
+        categories = Category.query.all()
+        for category in categories:
+            data.append(category.type)
+        return jsonify({
+            "categories": data
+        }), 200
 
     '''
     @TODO: 
