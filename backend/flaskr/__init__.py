@@ -1,11 +1,13 @@
 import os
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, abort, jsonify, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
 
 from models import setup_db, Question, Category
-from helpers import pagination
+from helpers import format_paginated_questions
+
+QUESTIONS_PER_PAGE = 10
 
 
 def create_app(test_config=None):
@@ -43,31 +45,36 @@ def create_app(test_config=None):
             "categories": data
         }), 200
 
-    # todo, add next and prev links for pagination...
     @app.route("/questions")
     def get_questions():
         """
             Handles GET requests for questions categories,
             including pagination.
             returns:
-            - a list of questions
+            - a list of paginated questions
             - total number of questions
-            - current category
-            - categories
+            - next url
+            - prev url
         """
         page = request.args.get('page', 1, type=int)
         questions = Question.query.join(
             Category, Category.id == Question.category).add_columns(
-            Category.type).all()
-        paginated_results = pagination(page, questions)
-        categories = []
-        for item in Category.query.all():
-            categories.append(item.type)
+            Category.type).paginate(page, QUESTIONS_PER_PAGE, False)
+        # Return serializable paginated questions.
+        paginated_results = format_paginated_questions(questions.items)
+        # Next page navigation.
+        next_url = url_for("get_questions", page=questions.next_num) \
+            if questions.has_next else None
+        # Previous page navigation.
+        prev_url = url_for("get_questions", page=questions.prev_num) \
+            if questions.has_prev else None
+        # Query total number of questions.
+        total_questions = len(Question.query.all())
         return jsonify({
-            "categories": categories,
-            "current_category": "all",
             "questions": paginated_results,
-            "total_questions": len(questions),
+            "next_url": next_url,
+            "prev_url": prev_url,
+            "total_questions": total_questions
         }), 200
 
     @app.route("/questions/<int:question_id>", methods=["DELETE"])
@@ -141,7 +148,7 @@ def create_app(test_config=None):
     @app.route("/categories/<int:category_id>/questions")
     def get_questions_by_category(category_id):
         """
-            Handles search requests for questions.
+            Handles GET requests for questions based on category.
             returns:
             - a list of paginated questions
             - total number of questions
@@ -156,6 +163,15 @@ def create_app(test_config=None):
             "questions": paginated_results,
             "total_questions": len(paginated_results)
         }), 200
+
+    @app.route("/quiz", methods=["POST"])
+    def get_quiz_questions():
+        """
+            Handles POST requests for quizzes.
+            returns:
+            - random question
+        """
+        pass
 
     '''
     @TODO: 

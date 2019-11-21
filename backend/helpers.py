@@ -1,15 +1,9 @@
-QUESTIONS_PER_PAGE = 10
-
-
-def pagination(page, questions):
-    """Paginate all questions."""
+def format_paginated_questions(questions):
+    """Format paginated questions object."""
     results = []
-    start = (page - 1) * QUESTIONS_PER_PAGE
-    end = start + QUESTIONS_PER_PAGE
     for question, category in questions:
         question = question.format()
         question["category_id"] = question["category"]
         question["category"] = category
         results.append(question)
-    paginated_results = results[start:end]
-    return paginated_results
+    return results
