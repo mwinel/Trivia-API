@@ -84,6 +84,12 @@ class TriviaTestCase(unittest.TestCase):
                                     data=json.dumps(body))
         self.assertEqual(response.status_code, 200)
 
+    def test_get_questions_by_category(self):
+        """Test get question by category."""
+        res = self.client.get('/categories/1/questions')
+        data = json.loads(res.data.decode())
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["success"], True)
 
 
 # Make the tests conveniently executable
