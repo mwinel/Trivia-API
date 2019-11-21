@@ -100,7 +100,6 @@ def create_app(test_config=None):
             }), 200
         return jsonify({"message": "Question not found."})
 
-    # add validation for exisiting questions
     @app.route("/questions", methods=["POST"])
     def create_question():
         """
@@ -116,6 +115,12 @@ def create_app(test_config=None):
             category=int(body.get("category")),
             difficulty=int(body.get("difficulty"))
         )
+        check_if_exists = Question.query.filter_by(
+            question=body.get("question")).first()
+        if check_if_exists:
+            return jsonify({
+                "message": "Question already exists."
+            }), 200
         # save question to the db
         question.insert()
         return jsonify({
