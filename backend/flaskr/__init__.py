@@ -1,6 +1,7 @@
 import os
 from flask import Flask, request, abort, jsonify, url_for
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 from flask_cors import CORS
 import random
 
@@ -60,16 +61,21 @@ def create_app(test_config=None):
         questions = Question.query.join(
             Category, Category.id == Question.category).add_columns(
             Category.type).paginate(page, QUESTIONS_PER_PAGE, False)
+
         # Return serializable paginated questions.
         paginated_results = format_paginated_questions(questions.items)
+
         # Next page navigation.
         next_url = url_for("get_questions", page=questions.next_num) \
             if questions.has_next else None
+
         # Previous page navigation.
         prev_url = url_for("get_questions", page=questions.prev_num) \
             if questions.has_prev else None
+
         # Query total number of questions.
         total_questions = len(Question.query.all())
+
         return jsonify({
             "questions": paginated_results,
             "next_url": next_url,
@@ -117,7 +123,6 @@ def create_app(test_config=None):
             "message": "Question successfully created."
         }), 201
 
-    # fix search
     @app.route("/questions/search", methods=["POST"])
     def search_question():
         """
@@ -128,21 +133,32 @@ def create_app(test_config=None):
             - current category
             - categories
         """
-        search_term = request.get_json("search_term")
-        search_results = []
+        search_term = request.get_json()["search_term"]
         page = request.args.get('page', 1, type=int)
-        questions = Question.query.join(
+
+        questions = Question.query.filter(func.lower(
+            Question.question).contains(func.lower(search_term))).join(
             Category, Category.id == Question.category).add_columns(
-            Category.type).all()
-        paginated_results = pagination(page, questions)
-        # lower case
-        for question in paginated_results:
-            print(question['question'])
-            if str(search_term) in question['question']:
-                search_results.append(question)
+            Category.type).paginate(page, QUESTIONS_PER_PAGE, False)
+
+        # Return serializable paginated search results.
+        search_results = format_paginated_questions(questions.items)
+
+        # Next page navigation.
+        next_url = url_for("get_questions", page=questions.next_num) \
+            if questions.has_next else None
+
+        # Previous page navigation.
+        prev_url = url_for("get_questions", page=questions.prev_num) \
+            if questions.has_prev else None
+
+        total_search_results = len(search_results)
+
         return jsonify({
             "questions": search_results,
-            "total_search_results": len(search_results)
+            "next_url": next_url,
+            "prev_url": prev_url,
+            "total_search_results": total_search_results
         }), 201
 
     @app.route("/categories/<int:category_id>/questions")
