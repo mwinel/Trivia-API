@@ -72,7 +72,7 @@ One note before you delve into your tasks: for each endpoint you are expected to
 
 The REST API is described below.
 
-## Get categories
+## Get questions
 
 ### Request
 
@@ -148,6 +148,46 @@ Content-Length: 2
         "Entertainment",
         "Sports"
     ],
+    "success": true
+}
+```
+
+## Post question
+
+### Request
+
+```
+GET /categories
+postman 'Accept: application/json' http://127.0.0.1:5000/question
+- request args: None
+
+{
+	"question": "Who directed the movie 'Once Upon a time in Hollywood'?",
+	"answer": "Quentin Tarantino",
+	"category": 4,
+	"difficulty": 2
+}
+```
+
+### Response
+
+```
+HTTP/1.1 201 Created
+Date: Thu, 21 Nov 2019 12:36:30 GMT
+Status: 200 OK
+Connection: close
+Content-Type: application/json
+Content-Length: 2
+
+{
+    "message": "Question successfully created.",
+    "question": {
+        "answer": "Quentin Tarantino",
+        "category": 4,
+        "difficulty": 2,
+        "id": 24,
+        "question": "Who directed the movie 'Once Upon a time in Hollywood'?"
+    },
     "success": true
 }
 ```
