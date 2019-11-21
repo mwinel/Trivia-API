@@ -77,8 +77,56 @@ The REST API is described below.
 ### Request
 
 ```
+GET /questions
+postman 'Accept: application/json' http://127.0.0.1:5000/questions?page=2
+- request args: None
+```
+
+### Response
+
+```
+HTTP/1.1 200 OK
+Date: Thu, 21 Nov 2019 12:36:30 GMT
+Status: 200 OK
+Connection: close
+Content-Type: application/json
+Content-Length: 2
+
+{
+    "next_url": /questions?page=3,
+    "prev_url": "/questions?page=1",
+    "questions": [
+        {
+            "answer": "Agra",
+            "category": "Geography",
+            "category_id": 3,
+            "difficulty": 2,
+            "id": 15,
+            "question": "The Taj Mahal is located in which Indian city?"
+        },
+        {
+            "answer": "Mona Lisa",
+            "category": "Art",
+            "category_id": 2,
+            "difficulty": 3,
+            "id": 17,
+            "question": "La Giaconda is better known as what?"
+        },
+        ...
+    ],
+    "success": true,
+    "total_questions": 1990
+}
+```
+
+## Get categories
+
+### Request
+
+```
 GET /categories
 postman 'Accept: application/json' http://127.0.0.1:5000/categories
+- request args: None
 ```
 
 ### Response
