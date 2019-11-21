@@ -209,11 +209,32 @@ def create_app(test_config=None):
         return jsonify({
             "question": question
         }), 200
+
+    @app.errorhandler(404)
+    def not_found(error):
+        response = jsonify({
+            "success": False,
+            "error": 404,
+            "message": "Not found."
+        })
+        return response, 404
     
-    '''
-    @TODO: 
-    Create error handlers for all expected errors 
-    including 404 and 422. 
-    '''
+    @app.errorhandler(405)
+    def method_not_allowed(error):
+        response = jsonify({
+            "success": False,
+            "error": 405,
+            "message": "Method not allowed."
+        })
+        return response, 405
+
+    @app.errorhandler(500)
+    def internal_server_error(error):
+        response = jsonify({
+            "success": False,
+            "error": 500,
+            "message": "Internal server error."
+        })
+        return response, 500
 
     return app
