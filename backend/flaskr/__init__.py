@@ -106,7 +106,7 @@ def create_app(test_config=None):
         # save question to the db
         question.insert()
         return jsonify({
-            "question": question.format,
+            "question": question.format(),
             "message": "Question successfully created."
         }), 201
 
