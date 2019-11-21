@@ -91,6 +91,16 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
 
+    def test_not_found(self):
+        """Test not found with wrong endpoint"""
+        res = self.client.get("/question")
+        self.assertEqual(res.status_code, 404)
+
+    def test_method_not_allowed(self):
+        """Test method not allowed."""
+        res = self.client.put("/questions")
+        self.assertEqual(res.status_code, 405)
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
