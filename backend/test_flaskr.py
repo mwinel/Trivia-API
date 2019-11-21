@@ -26,7 +26,7 @@ class TriviaTestCase(unittest.TestCase):
             self.db.init_app(self.app)
             # create all tables
             self.db.create_all()
-    
+
     def tearDown(self):
         """Executed after reach test"""
         pass
@@ -48,17 +48,36 @@ class TriviaTestCase(unittest.TestCase):
     def test_delete_question(self):
         """Test delete a question given its id."""
         res = json.loads(self.client.get("/questions").data.decode())
-        count1 = res['total_questions']
+        count_one = res['total_questions']
         res = self.client.delete(
             f'/questions/{random.choice(res["questions"])["id"]}')
-        count2 = json.loads(self.client.get(
+        count_two = json.loads(self.client.get(
             "/questions").data.decode())['total_questions']
         result = json.loads(res.data.decode())
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(count1, count2 + 1)
+        self.assertEqual(count_one, count_two + 1)
         self.assertEqual(result["success"], True)
         self.assertEqual(result["message"], "Question successfully deleted.")
 
+    def test_post_question(self):
+        """Test creating a new question."""
+        body = {
+            "question": "What is my name?",
+            "answer": "Nelson Mwiru",
+            "category": 6,
+            "difficulty": 3
+        }
+        count_one = json.loads(self.client.get(
+            "/questions").data.decode())["total_questions"]
+        res = self.client.post("/questions",
+                               content_type="application/json",
+                               data=json.dumps(body))
+        count_two = json.loads(self.client.get(
+            "/questions").data.decode())["total_questions"]
+        result = json.loads(res.data.decode())
+        self.assertEqual(res.status_code, 201)
+        self.assertEqual(count_one, count_two - 1)
+        self.assertEqual(result["success"], True)
 
 
 # Make the tests conveniently executable
