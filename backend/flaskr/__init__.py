@@ -87,11 +87,13 @@ def create_app(test_config=None):
             }), 200
         return jsonify({"message": "Question not found."})
 
+    # add validation for exisiting questions
     @app.route("/questions", methods=["POST"])
     def create_question():
         """
             Handles POST requests for questions.
             returns:
+            - question object
             - success message
         """
         body = request.get_json()
@@ -104,19 +106,21 @@ def create_app(test_config=None):
         # save question to the db
         question.insert()
         return jsonify({
+            "question": question.format,
             "message": "Question successfully created."
         }), 201
 
-    '''
-    @TODO: 
-    Create an endpoint to POST a new question, 
-    which will require the question and answer text, 
-    category, and difficulty score.
-
-    TEST: When you submit a question on the "Add" tab, 
-    the form will clear and the question will appear at the end of the last page
-    of the questions list in the "List" tab.  
-    '''
+    @app.route("/questions/search", methods=["POST"])
+    def search_question():
+        """
+            Handles search requests for questions.
+            returns:
+            - a list of paginated questions
+            - total number of questions
+            - current category
+            - categories
+        """
+        pass
 
     '''
     @TODO: 
