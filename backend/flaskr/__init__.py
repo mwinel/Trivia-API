@@ -32,6 +32,8 @@ def create_app(test_config=None):
         """
            Handles GET requests for all available
            categories.
+           returns:
+           - all categories
         """
         data = []
         categories = Category.query.all()
@@ -41,14 +43,12 @@ def create_app(test_config=None):
             "categories": data
         }), 200
 
-    
     # todo, add next and prev links for pagination...
     @app.route("/questions")
     def get_questions():
         """
             Handles GET requests for questions categories,
             including pagination.
-
             returns:
             - a list of questions
             - total number of questions
@@ -69,27 +69,43 @@ def create_app(test_config=None):
             "questions": paginated_results,
             "total_questions": len(questions),
         }), 200
-    
-    @app.route("/questions")
-    def delete_questions():
+
+    @app.route("/questions/<int:question_id>", methods=["DELETE"])
+    def delete_questions(question_id):
         """
             Handles DELETE requests for questions.
-
             params:
             - question id
-
             returns:
             - success message
         """
-        pass
-    
-    '''
-    @TODO: 
-    Create an endpoint to DELETE question using a question ID. 
+        question = Question.query.filter_by(id=question_id).first()
+        if question:
+            question.delete()
+            return jsonify({
+                "message": "Question successfully deleted."
+            }), 200
+        return jsonify({"message": "Question not found."})
 
-    TEST: When you click the trash icon next to a question, the question will be removed.
-    This removal will persist in the database and when you refresh the page. 
-    '''
+    @app.route("/questions", methods=["POST"])
+    def create_question():
+        """
+            Handles POST requests for questions.
+            returns:
+            - success message
+        """
+        body = request.get_json()
+        question = Question(
+            question=body.get("question"),
+            answer=body.get("answer"),
+            category=int(body.get("category")),
+            difficulty=int(body.get("difficulty"))
+        )
+        # save question to the db
+        question.insert()
+        return jsonify({
+            "message": "Question successfully created."
+        }), 201
 
     '''
     @TODO: 
