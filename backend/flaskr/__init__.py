@@ -110,6 +110,7 @@ def create_app(test_config=None):
             "message": "Question successfully created."
         }), 201
 
+    # fix search
     @app.route("/questions/search", methods=["POST"])
     def search_question():
         """
@@ -120,7 +121,22 @@ def create_app(test_config=None):
             - current category
             - categories
         """
-        pass
+        search_term = request.get_json("search_term")
+        search_results = []
+        page = request.args.get('page', 1, type=int)
+        questions = Question.query.join(
+            Category, Category.id == Question.category).add_columns(
+            Category.type).all()
+        paginated_results = pagination(page, questions)
+        # lower case
+        for question in paginated_results:
+            print(question['question'])
+            if str(search_term) in question['question']:
+                search_results.append(question)
+        return jsonify({
+            "questions": search_results,
+            "total_search_results": len(search_results)
+        }), 201
 
     '''
     @TODO: 
