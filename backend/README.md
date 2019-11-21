@@ -58,6 +58,39 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 
 The REST API is described below.
 
+## GET categories
+
+### Request
+
+```
+GET /categories
+postman 'Accept: application/json' http://127.0.0.1:5000/categories
+- request args: None
+```
+
+### Response
+
+```
+HTTP/1.1 200 OK
+Date: Thu, 21 Nov 2019 12:36:30 GMT
+Status: 200 OK
+Connection: close
+Content-Type: application/json
+Content-Length: 2
+
+{
+    "categories": [
+        "Science",
+        "Art",
+        "Geography",
+        "History",
+        "Entertainment",
+        "Sports"
+    ],
+    "success": true
+}
+```
+
 ## GET questions
 
 ### Request
@@ -105,14 +138,14 @@ Content-Length: 2
 }
 ```
 
-## GET categories
+## GET questions per category
 
 ### Request
 
 ```
-GET /categories
-postman 'Accept: application/json' http://127.0.0.1:5000/categories
-- request args: None
+GET /categories/<category_id>/questions
+postman 'Accept: application/json' http://127.0.0.1:5000/categories/2/questions
+- request args: <category_id>
 ```
 
 ### Response
@@ -126,15 +159,26 @@ Content-Type: application/json
 Content-Length: 2
 
 {
-    "categories": [
-        "Science",
-        "Art",
-        "Geography",
-        "History",
-        "Entertainment",
-        "Sports"
+    "questions": [
+        {
+            "answer": "Escher",
+            "category": "Art",
+            "category_id": 2,
+            "difficulty": 1,
+            "id": 16,
+            "question": "Which Dutch graphic artist–initials M C was a creator of optical illusions?"
+        },
+        {
+            "answer": "Mona Lisa",
+            "category": "Art",
+            "category_id": 2,
+            "difficulty": 3,
+            "id": 17,
+            "question": "La Giaconda is better known as what?"
+        }
     ],
-    "success": true
+    "success": true,
+    "total_questions": 2
 }
 ```
 
@@ -175,6 +219,94 @@ Content-Length: 2
         "question": "Who directed the movie 'Once Upon a time in Hollywood'?"
     },
     "success": true
+}
+```
+
+## POST search questions
+
+### Request
+
+```
+POST /questions/search
+postman 'Accept: application/json' http://127.0.0.1:5000/questions/search
+- request args: None
+
+{
+	"search_term": "What"
+}
+```
+
+### Response
+
+```
+HTTP/1.1 200 OK
+Date: Thu, 21 Nov 2019 12:36:30 GMT
+Status: 200 OK
+Connection: close
+Content-Type: application/json
+Content-Length: 2
+
+{
+    "next_url": /questions?page=3,
+    "prev_url": "/questions?page=1",
+    "questions": [
+        {
+            "answer": "Edward Scissorhands",
+            "category": "Entertainment",
+            "category_id": 5,
+            "difficulty": 3,
+            "id": 6,
+            "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
+        },
+        {
+            "answer": "Tom Cruise",
+            "category": "Entertainment",
+            "category_id": 5,
+            "difficulty": 4,
+            "id": 4,
+            "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+        },
+        ...
+    ],
+    "success": true,
+    "total_questions": 1990
+}
+```
+
+## POST quiz
+
+### Request
+
+```
+POST /quiz
+postman 'Accept: application/json' http://127.0.0.1:5000/quiz
+- request args: None
+
+{
+	"quiz_category": {"id": 2},
+	"previous_questions": [16, ...]
+}
+```
+
+### Response
+
+```
+HTTP/1.1 200 OK
+Date: Thu, 21 Nov 2019 12:36:30 GMT
+Status: 200 OK
+Connection: close
+Content-Type: application/json
+Content-Length: 2
+
+{
+    {
+        "answer": "Tom Cruise",
+        "category": "Entertainment",
+        "category_id": 5,
+        "difficulty": 4,
+        "id": 4,
+        "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+    }
 }
 ```
 
