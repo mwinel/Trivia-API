@@ -67,17 +67,23 @@ class TriviaTestCase(unittest.TestCase):
             "category": 6,
             "difficulty": 3
         }
-        count_one = json.loads(self.client.get(
-            "/questions").data.decode())["total_questions"]
         res = self.client.post("/questions",
                                content_type="application/json",
                                data=json.dumps(body))
-        count_two = json.loads(self.client.get(
-            "/questions").data.decode())["total_questions"]
         result = json.loads(res.data.decode())
         self.assertEqual(res.status_code, 201)
-        self.assertEqual(count_one, count_two - 1)
         self.assertEqual(result["success"], True)
+
+    def test_search_questions(self):
+        """Test search questions."""
+        res = json.loads(self.client.get("/questions").data.decode())
+        search_term = random.choice(res["questions"])["question"]
+        body = {"search_term": search_term}
+        response = self.client.post("/questions/search",
+                                    content_type="application/json",
+                                    data=json.dumps(body))
+        self.assertEqual(response.status_code, 200)
+
 
 
 # Make the tests conveniently executable

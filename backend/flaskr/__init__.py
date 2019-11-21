@@ -169,7 +169,7 @@ def create_app(test_config=None):
             "next_url": next_url,
             "prev_url": prev_url,
             "total_search_results": total_search_results
-        }), 201
+        }), 200
 
     @app.route("/categories/<int:category_id>/questions")
     def get_questions_by_category(category_id):
