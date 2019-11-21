@@ -192,10 +192,10 @@ postman 'Accept: application/json' http://127.0.0.1:5000/questions
 - request args: None
 
 {
-	"question": "Who directed the movie 'Once Upon a time in Hollywood'?",
-	"answer": "Quentin Tarantino",
-	"category": 4,
-	"difficulty": 2
+    "question": "Who directed the movie 'Once Upon a time in Hollywood'?",
+    "answer": "Quentin Tarantino",
+    "category": 4,
+    "difficulty": 2
 }
 ```
 
@@ -232,7 +232,7 @@ postman 'Accept: application/json' http://127.0.0.1:5000/questions/search
 - request args: None
 
 {
-	"search_term": "What"
+    "search_term": "What"
 }
 ```
 
@@ -283,8 +283,8 @@ postman 'Accept: application/json' http://127.0.0.1:5000/quiz
 - request args: None
 
 {
-	"quiz_category": {"id": 2},
-	"previous_questions": [16, ...]
+    "quiz_category": {"id": 2},
+    "previous_questions": [16, ...]
 }
 ```
 
