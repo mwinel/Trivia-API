@@ -43,6 +43,7 @@ def create_app(test_config=None):
         for category in categories:
             data.append(category.type)
         return jsonify({
+            "success": True,
             "categories": data
         }), 200
 
@@ -77,6 +78,7 @@ def create_app(test_config=None):
         total_questions = len(Question.query.all())
 
         return jsonify({
+            "success": True,
             "questions": paginated_results,
             "next_url": next_url,
             "prev_url": prev_url,
@@ -96,6 +98,7 @@ def create_app(test_config=None):
         if question:
             question.delete()
             return jsonify({
+                "success": True,
                 "message": "Question successfully deleted."
             }), 200
         return jsonify({"message": "Question not found."})
@@ -124,6 +127,7 @@ def create_app(test_config=None):
         # save question to the db
         question.insert()
         return jsonify({
+            "success": True,
             "question": question.format(),
             "message": "Question successfully created."
         }), 201
@@ -160,6 +164,7 @@ def create_app(test_config=None):
         total_search_results = len(search_results)
 
         return jsonify({
+            "success": True,
             "questions": search_results,
             "next_url": next_url,
             "prev_url": prev_url,
@@ -181,6 +186,7 @@ def create_app(test_config=None):
             Category.type).paginate(page, QUESTIONS_PER_PAGE, False)
         paginated_results = format_paginated_questions(questions.items)
         return jsonify({
+            "success": True,
             "questions": paginated_results,
             "total_questions": len(paginated_results)
         }), 200
@@ -207,6 +213,7 @@ def create_app(test_config=None):
             question = random.choice(questions).format()
 
         return jsonify({
+            "success": True,
             "question": question
         }), 200
 
