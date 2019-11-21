@@ -178,8 +178,8 @@ def create_app(test_config=None):
         page = request.args.get('page', 1, type=int)
         questions = Question.query.filter_by(category=category_id).join(
             Category, Category.id == Question.category).add_columns(
-            Category.type).all()
-        paginated_results = pagination(page, questions)
+            Category.type).paginate(page, QUESTIONS_PER_PAGE, False)
+        paginated_results = format_paginated_questions(questions.items)
         return jsonify({
             "questions": paginated_results,
             "total_questions": len(paginated_results)
