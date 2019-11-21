@@ -5,8 +5,7 @@ from flask_cors import CORS
 import random
 
 from models import setup_db, Question, Category
-
-QUESTIONS_PER_PAGE = 10
+from helpers import pagination
 
 
 def create_app(test_config=None):
@@ -42,25 +41,48 @@ def create_app(test_config=None):
             "categories": data
         }), 200
 
-    '''
-    @TODO: 
-    Create an endpoint to handle GET requests 
-    for all available categories.
-    '''
+    
+    # todo, add next and prev links for pagination...
+    @app.route("/questions")
+    def get_questions():
+        """
+            Handles GET requests for questions categories,
+            including pagination.
 
-    '''
-    @TODO: 
-    Create an endpoint to handle GET requests for questions, 
-    including pagination (every 10 questions). 
-    This endpoint should return a list of questions, 
-    number of total questions, current category, categories. 
+            returns:
+            - a list of questions
+            - total number of questions
+            - current category
+            - categories
+        """
+        page = request.args.get('page', 1, type=int)
+        questions = Question.query.join(
+            Category, Category.id == Question.category).add_columns(
+            Category.type).all()
+        paginated_results = pagination(page, questions)
+        categories = []
+        for item in Category.query.all():
+            categories.append(item.type)
+        return jsonify({
+            "categories": categories,
+            "current_category": "all",
+            "questions": paginated_results,
+            "total_questions": len(questions),
+        }), 200
+    
+    @app.route("/questions")
+    def delete_questions():
+        """
+            Handles DELETE requests for questions.
 
-    TEST: At this point, when you start the application
-    you should see questions and categories generated,
-    ten questions per page and pagination at the bottom of the screen for three pages.
-    Clicking on the page numbers should update the questions. 
-    '''
+            params:
+            - question id
 
+            returns:
+            - success message
+        """
+        pass
+    
     '''
     @TODO: 
     Create an endpoint to DELETE question using a question ID. 
